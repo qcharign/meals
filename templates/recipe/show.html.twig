@@ -1,0 +1,13 @@
+{% set active = "recipe" %}
+{%  extends "base.html.twig" %}
+
+{% block title %}
+    Recette : {{ recipe.name }}
+{% endblock %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path("recipe_index") }}">Accueil</a></li>
+        <li class="breadcrumb-item active"><a href="#">{{ recipe.name }}</a></li>
+    </ol>
+{% endblock %}

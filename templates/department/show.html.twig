@@ -1,0 +1,27 @@
+{% set active = "department" %}
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Rayon : {{ department.name }}
+{% endblock %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path("department_index") }}">Rayon</a></li>
+        <li class="breadcrumb-item active"><a href="#">{{ department.name }}</a></li>
+    </ol>
+
+    <ul class="list-group">
+        {% for ingredient in ingredientRepository.findBy({"department": department}, {"name": "ASC"}) %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ ingredient.name }}
+                <span class="badge bg-primary rounded-pill">{{ recipeRepository.countByIngredient(ingredient) }}</span>
+            </li>
+        {% endfor %}
+        <li class="list-group-item d-flex justify-content-between align-items-center active">
+            <a style="text-decoration: none; color: inherit" href="{{ path("ingredient_create") }}" alt="bouton ajouter">
+                Ajouter un ingredient
+            </a>
+        </li>
+    </ul>
+{% endblock %}

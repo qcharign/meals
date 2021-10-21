@@ -1,0 +1,9 @@
+<div class="col">
+    <div class="card bg-light mb-3" style="max-width: 20rem;">
+        <div class="card-header">{{ ingredient.name }}
+        </div>
+        <div class="card-body">
+            <a href="{{ path("ingredient_show", {"slug": ingredient.slug}) }}" type="button" class="btn btn-info">Info</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+{% set active = "recipe" %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Recettes{% endblock %}
+
+{% block body %}
+    <div class="row">
+        {% for recipe in recipeRepository.findBy({}, {"name": "ASC"}) %}
+            {% include "shared/_recipe_card.html.twig" %}
+        {% endfor %}
+    </div>
+{% endblock %}
