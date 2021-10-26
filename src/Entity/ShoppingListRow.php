@@ -29,6 +29,16 @@ class ShoppingListRow
      */
     private $ingredient;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $numberOfPresence;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $bought;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -54,6 +64,30 @@ class ShoppingListRow
     public function setIngredient(?Ingredient $ingredient): self
     {
         $this->ingredient = $ingredient;
+
+        return $this;
+    }
+
+    public function getNumberOfPresence(): ?int
+    {
+        return $this->numberOfPresence;
+    }
+
+    public function setNumberOfPresence(int $numberOfPresence): self
+    {
+        $this->numberOfPresence = $numberOfPresence;
+
+        return $this;
+    }
+
+    public function getBought(): ?bool
+    {
+        return $this->bought;
+    }
+
+    public function setBought(bool $bought): self
+    {
+        $this->bought = $bought;
 
         return $this;
     }

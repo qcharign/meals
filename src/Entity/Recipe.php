@@ -12,6 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Recipe
 {
+    const TYPE_STARTER = "starter";
+    const TYPE_MAIN_COURSE = "main course";
+    const TYPE_DESSERT = "dessert";
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -38,6 +42,11 @@ class Recipe
      * @ORM\ManyToMany(targetEntity=ShoppingList::class, mappedBy="recipes")
      */
     private $shoppingLists;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $type;
 
     public function __construct()
     {
@@ -121,6 +130,18 @@ class Recipe
         if ($this->shoppingLists->removeElement($shoppingList)) {
             $shoppingList->removeRecipe($this);
         }
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

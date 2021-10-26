@@ -1,0 +1,13 @@
+<li
+        id="shopping_list_row_{{ row.id }}"
+        role="button"
+        data-action="btn-ajax"
+        data-url="{{ path("shopping_list_row_bought", {"id" : row.id, "isBought": (row.bought ? "0" : "1")}) }}"
+        class="list-group-item d-flex justify-content-end align-items-center">
+    <i class="far {{ (row.bought ? "fa-check-square" : "fa-square") }} "></i>
+    <span class="ms-1 {{ (row.bought) ? "text-decoration-line-through" : "" }}">{{ row.ingredient.name }}</span>
+    <span style="flex: 1"></span>
+    {% if row.numberOfPresence > 0 %}
+        <span class="badge float-end bg-primary rounded-pill me-1"> {{ row.numberOfPresence }} recette(s)</span>
+    {% endif %}
+</li>

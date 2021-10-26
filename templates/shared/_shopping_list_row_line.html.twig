@@ -1,0 +1,4 @@
+<li class="list-group-item d-flex justify-content-between align-items-center {{ (row.bought) ? "disabled text-success" : "" }}">
+    {{ row.ingredient.name }}
+    <span class="badge bg-primary rounded-pill">présent dans {{ row.numberOfPresence }} recette(s)</span>
+</li>

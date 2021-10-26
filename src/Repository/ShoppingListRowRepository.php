@@ -2,6 +2,8 @@
 
 namespace App\Repository;
 
+use App\Entity\Department;
+use App\Entity\ShoppingList;
 use App\Entity\ShoppingListRow;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +19,25 @@ class ShoppingListRowRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ShoppingListRow::class);
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param Department   $department
+     * @return int|mixed|string
+     */
+    public function findByShoppingListAndDepartment(ShoppingList $shoppingList, Department $department)
+    {
+        $result = $this->createQueryBuilder("r")
+            ->innerJoin("r.ingredient", "i")
+            ->innerJoin("i.department", "d")
+            ->andWhere("r.shoppinglist = :myShoppingList")
+            ->andWhere("i.department = :myDepartment")
+            ->setParameter("myShoppingList", $shoppingList)
+            ->setParameter("myDepartment", $department)
+            ->getQuery()
+            ->getResult();
+        return $result;
     }
 
     // /**

@@ -1,0 +1,35 @@
+{% set active = "shoppingList" %}
+{% extends 'base.html.twig' %}
+
+{% block title %}
+{% endblock %}
+
+{% block body %}
+    {% if shoppingList is not null %}
+        <div class="card bg-light" style="max-width: 100rem;">
+            <h3 class="card-header">
+                {{ "Liste du " ~ shoppingList.date|format_datetime(locale='fr_FR', pattern="dd MMMM YYYY") }} :
+                <span class="small text-secondary ms-2">
+                    {{ shoppingList.typeNumber(constant('App\\Entity\\Recipe::TYPE_MAIN_COURSE')) }} repas -
+                    {{ shoppingList.typeNumber(constant('App\\Entity\\Recipe::TYPE_DESSERT')) }} dessert
+                </span>
+                {% include("/shopping_list/shared/_switch_locked.html.twig") %}
+            </h3>
+            <div class="card-body">
+                {% for department in departmentRepository.findBy({}, {"name" : "asc"}) %}
+                    {% set rows = shoppingListRowRepository.findByShoppingListAndDepartment(shoppingList, department) %}
+                        {% if rows is not empty %}
+                            <ul class="list-group mb-1">
+                                <li class="list-group-item justify-content-between align-items-center active">
+                                    {{ department.name }}
+                                </li>
+                                {% for row in rows %}
+                                    {% include "shopping_list/shared/_row.html.twig" %}
+                                {% endfor %}
+                            </ul>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

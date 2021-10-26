@@ -34,6 +34,11 @@ class ShoppingList
      */
     private $recipes;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $locked;
+
     public function __construct()
     {
         $this->rows = new ArrayCollection();
@@ -109,5 +114,40 @@ class ShoppingList
         $this->recipes->removeElement($recipe);
 
         return $this;
+    }
+
+    public function getLocked(): ?bool
+    {
+        return $this->locked;
+    }
+
+    public function setLocked(bool $locked): self
+    {
+        $this->locked = $locked;
+
+        return $this;
+    }
+
+    /**
+     * @param Ingredient $ingredient
+     * @return ShoppingListRow|null
+     */
+    public function rowWithIngredient(Ingredient $ingredient): ?ShoppingListRow
+    {
+        foreach ($this->getRows() as $row) {
+            if ($row->getIngredient() === $ingredient)
+                return $row;
+        }
+        return null;
+    }
+
+    /**
+     * @param string $type
+     * @return int
+     */
+    public function typeNumber(string $type): int
+    {
+        $typeRecipes = $this->recipes->filter(fn(Recipe $recipe) => $recipe->getType() === $type);
+        return $typeRecipes->count();
     }
 }

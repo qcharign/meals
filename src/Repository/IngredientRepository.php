@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Department;
 use App\Entity\Ingredient;
+use App\Entity\ShoppingList;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

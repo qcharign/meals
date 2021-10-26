@@ -6,6 +6,9 @@ twig:
         recipeRepository: "@App\\Repository\\RecipeRepository"
         ingredientRepository: "@App\\Repository\\IngredientRepository"
         departmentRepository: "@App\\Repository\\DepartmentRepository"
+        shoppingListRepository: "@App\\Repository\\ShoppingListRepository"
+        shoppingListRowRepository: "@App\\Repository\\ShoppingListRowRepository"
+        javascripts_dir: '/js/'
 
 when@test:
     twig:
