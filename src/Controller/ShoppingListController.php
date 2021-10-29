@@ -20,7 +20,7 @@ class ShoppingListController extends BaseController
     #[Route('/shopping-list', name: 'shopping_list_index')]
     public function index(): Response
     {
-        return $this->render('shopping_list/index.html.twig', [
+        return $this->render('desktop/shopping_list/index.html.twig', [
             'controller_name' => 'ShoppingListController',
         ]);
     }
@@ -48,7 +48,7 @@ class ShoppingListController extends BaseController
     {
         $shoppingList = $shoppingListRepository->find($id);
 
-        return $this->render('shopping_list/show.html.twig', [
+        return $this->render('desktop/shopping_list/show.html.twig', [
             "shoppingList" => $shoppingList
         ]);
     }
@@ -80,10 +80,13 @@ class ShoppingListController extends BaseController
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                "alerts" => [
+                "views" => [
                     [
-                        "status" => "success",
-                        "message" => $recipe->getName()." à été ajouté à la liste.",
+                        "selector" => "#recipe_".$recipe->getId(),
+                        "html" => $this->renderView("desktop/recipe/shared/_recipe_row.html.twig", [
+                            "shoppingList" => $shoppingList,
+                            "recipe" => $recipe,
+                        ])
                     ]
                 ]
             ]);
@@ -119,10 +122,13 @@ class ShoppingListController extends BaseController
 
         if ($request->isXmlHttpRequest()) {
             return new JsonResponse([
-                "alerts" => [
+                "views" => [
                     [
-                        "status" => "success",
-                        "message" => $recipe->getName()." à été enlevé de la liste.",
+                        "selector" => "#recipe_".$recipe->getId(),
+                        "html" => $this->renderView("desktop/recipe/shared/_recipe_row.html.twig", [
+                            "shoppingList" => $shoppingList,
+                            "recipe" => $recipe,
+                        ]),
                     ]
                 ]
             ]);
@@ -216,7 +222,7 @@ class ShoppingListController extends BaseController
 
         $manager->flush();
 
-        $html = $this->renderView("shopping_list/shared/_row.html.twig", ["row" => $shoppingListRow]);
+        $html = $this->renderView("desktop/shopping_list/shared/_row.html.twig", ["row" => $shoppingListRow]);
 
         $jsonData = [];
         $jsonData["status"] = "success";
@@ -243,7 +249,7 @@ class ShoppingListController extends BaseController
 
         $manager->flush();
 
-        $html = $this->renderView("shopping_list/shared/_switch_locked.html.twig", ["shoppingList" => $shoppingList]);
+        $html = $this->renderView("desktop/shopping_list/shared/_switch_locked.html.twig", ["shoppingList" => $shoppingList]);
 
         $jsonData = [];
         $jsonData["status"] = "success";

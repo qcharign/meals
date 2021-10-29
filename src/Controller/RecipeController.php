@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\ShoppingList;
 use App\Repository\RecipeRepository;
+use App\Repository\ShoppingListRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -10,10 +12,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class RecipeController extends AbstractController
 {
     #[Route('/recipe', name: 'recipe_index')]
-    public function index(RecipeRepository $recipeRepository): Response
+    public function index(RecipeRepository $recipeRepository, ShoppingListRepository $shoppingListRepository): Response
     {
         $recipes = $recipeRepository->findBy([], ["name" => "ASC"]);
-        return $this->render('recipe/index.html.twig', [
+        $shoppingList = $shoppingListRepository->findOneBy(["locked" => false]);
+        return $this->render('desktop/recipe/index.html.twig', [
+            "recipes" => $recipes,
+            "shoppingList" => $shoppingList,
         ]);
     }
 
@@ -22,7 +27,7 @@ class RecipeController extends AbstractController
     public function show($slug, RecipeRepository $recipeRepository): Response
     {
         $recipe = $recipeRepository->findOneBy(["slug" => $slug]);
-        return $this->render('recipe/show.html.twig', [
+        return $this->render('desktop/recipe/show.html.twig', [
             "recipe" => $recipe
         ]);
     }
@@ -31,7 +36,7 @@ class RecipeController extends AbstractController
     public function create($slug, RecipeRepository $recipeRepository): Response
     {
         $recipe = $recipeRepository->findOneBy(["slug" => $slug]);
-        return $this->render('recipe/create.html.twig', [
+        return $this->render('desktop/recipe/create.html.twig', [
             "recipe" => $recipe
         ]);
     }
@@ -40,7 +45,7 @@ class RecipeController extends AbstractController
     public function edit($id, RecipeRepository $recipeRepository): Response
     {
         $recipe = $recipeRepository->find($id);
-        return $this->render('recipe/edit.html.twig', [
+        return $this->render('desktop/recipe/edit.html.twig', [
             "recipe" => $recipe
         ]);
     }

@@ -2,10 +2,23 @@ $(document).ready(function(){
     console.log("File ajax.js loaded");
 
     $(document).on("click", "[data-action='btn-ajax']", function(event) {
+        var loader = $(this).find("i[data-loader]");
+        console.log(loader);
+        switch (loader.data("loader")) {
+            case "replace":
+                loader.replaceWith("<i class='fas fa-spinner fa-spin'></i>");
+                break;
+            case "show":
+                loader.removeClass("hidden");
+                break;
+            default:
+                break;
+        }
         console.log("route call : " + $(this).data("url"));
         $.ajax({
             url: $(this).data("url"),
         }).done(function(data) {
+            console.log(data);
             showAlerts(data);
             showViews(data, event.target);
         });

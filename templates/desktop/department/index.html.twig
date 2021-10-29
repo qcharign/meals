@@ -1,0 +1,14 @@
+{% set active = "department" %}
+{% extends 'desktop/base.html.twig' %}
+
+{% block title %}
+    Rayons
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        {% for department in departmentRepository.findBy({}, {"name": "ASC"}) %}
+            {% include "desktop/shared/_department_card.html.twig" %}
+        {% endfor %}
+    </div>
+{% endblock %}

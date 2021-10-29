@@ -29,11 +29,6 @@ class Recipe
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Ingredient::class, inversedBy="recipes")
-     */
-    private $ingredients;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $slug;
@@ -48,10 +43,20 @@ class Recipe
      */
     private $type;
 
+    /**
+     * @ORM\OneToMany(targetEntity=RecipeRow::class, mappedBy="recipe", orphanRemoval=true)
+     */
+    private $rows;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $peopleNumber;
+
     public function __construct()
     {
-        $this->ingredients = new ArrayCollection();
         $this->shoppingLists = new ArrayCollection();
+        $this->rows = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -67,30 +72,6 @@ class Recipe
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Ingredient[]
-     */
-    public function getIngredients(): Collection
-    {
-        return $this->ingredients;
-    }
-
-    public function addIngredient(Ingredient $ingredient): self
-    {
-        if (!$this->ingredients->contains($ingredient)) {
-            $this->ingredients[] = $ingredient;
-        }
-
-        return $this;
-    }
-
-    public function removeIngredient(Ingredient $ingredient): self
-    {
-        $this->ingredients->removeElement($ingredient);
 
         return $this;
     }
@@ -144,5 +125,61 @@ class Recipe
         $this->type = $type;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|RecipeRow[]
+     */
+    public function getRows(): Collection
+    {
+        return $this->rows;
+    }
+
+    public function addRow(RecipeRow $row): self
+    {
+        if (!$this->rows->contains($row)) {
+            $this->rows[] = $row;
+            $row->setRecipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRow(RecipeRow $row): self
+    {
+        if ($this->rows->removeElement($row)) {
+            // set the owning side to null (unless already changed)
+            if ($row->getRecipe() === $this) {
+                $row->setRecipe(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPeopleNumber(): ?int
+    {
+        return $this->peopleNumber;
+    }
+
+    public function setPeopleNumber(?int $peopleNumber): self
+    {
+        $this->peopleNumber = $peopleNumber;
+
+        return $this;
+    }
+
+    /**
+     * @param Ingredient $ingredient
+     * @return bool
+     */
+    public function hasIngredient(Ingredient $ingredient): bool
+    {
+        foreach ($this->getRows() as $row) {
+            if ($row->getIngredient() === $ingredient) {
+                return true;
+            }
+        }
+        return false;
     }
 }

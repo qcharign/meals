@@ -1,0 +1,18 @@
+{% if shoppingList is null or not shoppingList.recipes.contains(recipe) %}
+    {% set url = path("shopping_list_add_recipe", {"id_recipe" : recipe.id}) %}
+{% elseif shoppingList.recipes.contains(recipe) %}
+    {% set url = path("shopping_list_remove_recipe", {"id_recipe" : recipe.id}) %}
+{% endif %}
+<li
+        id="recipe_{{ recipe.id }}"
+        role="button"
+        data-action="btn-ajax"
+        class="list-group-item list-group-item-action"
+        data-url="{{ url }}">
+    {% if shoppingList is null or not shoppingList.recipes.contains(recipe) %}
+        <i data-loader="replace" class="far fa-square me-1"></i>
+    {% elseif shoppingList.recipes.contains(recipe) %}
+        <i data-loader="replace" class="far fa-check-square me-1"></i>
+    {% endif %}
+    {{ recipe.name }}
+</li>

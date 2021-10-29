@@ -12,7 +12,7 @@ class DepartmentController extends AbstractController
     #[Route('/department', name: 'department_index')]
     public function index(): Response
     {
-        return $this->render('department/index.html.twig', [
+        return $this->render('desktop/department/index.html.twig', [
             'controller_name' => 'DepartmentController',
         ]);
     }
@@ -26,7 +26,7 @@ class DepartmentController extends AbstractController
             throw $this->createNotFoundException("Le rayon n'existe pas.");
         }
 
-        return $this->render('department/show.html.twig', [
+        return $this->render('desktop/department/show.html.twig', [
             "department" => $department
         ]);
     }

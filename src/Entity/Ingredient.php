@@ -30,11 +30,6 @@ class Ingredient
     private $image;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Recipe::class, mappedBy="ingredients")
-     */
-    private $recipes;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Department::class, inversedBy="ingredients")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -50,10 +45,20 @@ class Ingredient
      */
     private $shoppingListRows;
 
+    /**
+     * @ORM\OneToMany(targetEntity=RecipeRow::class, mappedBy="ingredient", orphanRemoval=true)
+     */
+    private $recipeRows;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Unit::class)
+     */
+    private $defaultUnit;
+
     public function __construct()
     {
-        $this->recipes = new ArrayCollection();
         $this->shoppingListRows = new ArrayCollection();
+        $this->recipeRows = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,33 +86,6 @@ class Ingredient
     public function setImage(string $image): self
     {
         $this->image = $image;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Recipe[]
-     */
-    public function getRecipes(): Collection
-    {
-        return $this->recipes;
-    }
-
-    public function addRecipe(Recipe $recipe): self
-    {
-        if (!$this->recipes->contains($recipe)) {
-            $this->recipes[] = $recipe;
-            $recipe->addIngredient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRecipe(Recipe $recipe): self
-    {
-        if ($this->recipes->removeElement($recipe)) {
-            $recipe->removeIngredient($this);
-        }
 
         return $this;
     }
@@ -162,6 +140,48 @@ class Ingredient
                 $shoppingListRow->setIngredient(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|RecipeRow[]
+     */
+    public function getRecipeRows(): Collection
+    {
+        return $this->recipeRows;
+    }
+
+    public function addRecipeRow(RecipeRow $recipeRow): self
+    {
+        if (!$this->recipeRows->contains($recipeRow)) {
+            $this->recipeRows[] = $recipeRow;
+            $recipeRow->setIngredient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecipeRow(RecipeRow $recipeRow): self
+    {
+        if ($this->recipeRows->removeElement($recipeRow)) {
+            // set the owning side to null (unless already changed)
+            if ($recipeRow->getIngredient() === $this) {
+                $recipeRow->setIngredient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDefaultUnit(): ?Unit
+    {
+        return $this->defaultUnit;
+    }
+
+    public function setDefaultUnit(?Unit $defaultUnit): self
+    {
+        $this->defaultUnit = $defaultUnit;
 
         return $this;
     }

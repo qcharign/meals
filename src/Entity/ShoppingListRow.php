@@ -30,14 +30,14 @@ class ShoppingListRow
     private $ingredient;
 
     /**
-     * @ORM\Column(type="integer")
-     */
-    private $numberOfPresence;
-
-    /**
      * @ORM\Column(type="boolean")
      */
     private $bought;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $quantity;
 
     public function getId(): ?int
     {
@@ -68,18 +68,6 @@ class ShoppingListRow
         return $this;
     }
 
-    public function getNumberOfPresence(): ?int
-    {
-        return $this->numberOfPresence;
-    }
-
-    public function setNumberOfPresence(int $numberOfPresence): self
-    {
-        $this->numberOfPresence = $numberOfPresence;
-
-        return $this;
-    }
-
     public function getBought(): ?bool
     {
         return $this->bought;
@@ -88,6 +76,29 @@ class ShoppingListRow
     public function setBought(bool $bought): self
     {
         $this->bought = $bought;
+
+        return $this;
+    }
+
+    public function getQuantity(): ?float
+    {
+        return $this->quantity;
+    }
+
+    public function addQuantity(?float $quantity): self
+    {
+        if (is_null($this->quantity) || is_null($quantity)) {
+            $this->quantity = null;
+        } else {
+            $this->quantity += $quantity;
+        }
+
+        return $this;
+    }
+
+    public function setQuantity(?float $quantity): self
+    {
+        $this->quantity = $quantity;
 
         return $this;
     }

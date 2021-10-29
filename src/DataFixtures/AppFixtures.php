@@ -2,11 +2,14 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Conversion;
 use App\Entity\Department;
 use App\Entity\Ingredient;
 use App\Entity\Recipe;
+use App\Entity\RecipeRow;
 use App\Entity\ShoppingList;
 use App\Entity\ShoppingListRow;
+use App\Entity\Unit;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ObjectManager;
@@ -16,369 +19,990 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class AppFixtures extends Fixture
 {
 
+    const UNITS = [
+        [
+            "name" => "piece",
+            "abbreviation" => ""
+        ],
+        [
+            "name" => "kilo",
+            "abbreviation" => "kg"
+        ],
+        [
+            "name" => "gramme",
+            "abbreviation" => "g"
+        ],
+        [
+            "name" => "litre",
+            "abbreviation" => "l"
+        ],
+        [
+            "name" => "millilitre",
+            "abbreviation" => "ml"
+        ],
+        [
+            "name" => "centilitre",
+            "abbreviation" => "cl"
+        ],
+        [
+            "name" => "cuillère à soupe",
+            "abbreviation" => "cuillère à soupe"
+        ],
+        [
+            "name" => "cuillère à café",
+            "abbreviation" => "cuillère à café"
+        ],
+        [
+            "name" => "tasse à café",
+            "abbreviation" => "tasse à café"
+        ],
+        [
+            "name" => "verre",
+            "abbreviation" => "verre"
+        ],
+        [
+            "name" => "bol",
+            "abbreviation" => "bol"
+        ],
+    ];
+
+    const CONVERSIONS = [
+        [
+            "startUnit" => "centilitre",
+            "endUnit" => "litre",
+            "coefficient" => 0.01,
+        ],
+        [
+            "startUnit" => "bol",
+            "endUnit" => "centilitre",
+            "coefficient" => 35,
+        ],
+        [
+            "startUnit" => "verre",
+            "endUnit" => "centilitre",
+            "coefficient" => 25,
+        ],
+        [
+            "startUnit" => "tasse à café",
+            "endUnit" => "centilitre",
+            "coefficient" => 10,
+        ],
+        [
+            "startUnit" => "cuillère à café",
+            "endUnit" => "centilitre",
+            "coefficient" => 0.5,
+        ],
+        [
+            "startUnit" => "cuillère à soupe",
+            "endUnit" => "centilitre",
+            "coefficient" => 1.5,
+        ],
+        [
+            "startUnit" => "kilo",
+            "endUnit" => "gramme",
+            "coefficient" => 1000,
+        ],
+        [
+            "startUnit" => "gramme",
+            "endUnit" => "kilo",
+            "coefficient" => 0.001,
+        ],
+    ];
+
     const INGREDIENTS = [
         [
             "name" => "Fruit & Légume",
             "image" => "https://cdn-icons-png.flaticon.com/128/1147/1147832.png",
             "ingredients" => [
-            "Aubergine",
-            "Ail",
-            [
-                "name" => "Avocat",
-                "image" => "https://cdn-icons-png.flaticon.com/64/135/135609.png"
+                [
+                    "name" => "Aubergine",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Ail",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Avocat",
+                    "image" => "https://cdn-icons-png.flaticon.com/64/135/135609.png"
+                ],
+                [
+                    "name" => "Bettrave",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Brocoli",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Banane",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Épinard",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Carotte",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Chou",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Courge",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Échalotte",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Concombre",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Champignon",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Haricot rouge",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Endive",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Haricot",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Salade",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Salade verte",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Poivron",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Pomme de terre",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Pomme",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Pomme golden",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Betternut",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Choux fleur",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Melon",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Poireau",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Citron",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Persil",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Oignon",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Oignon rouge",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Oignon blanc",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Petit pois",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Tomate cerise",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Tomate à farcir",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Courgette à farcir",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Tomate",
+                    "image" => "https://cdn-icons-png.flaticon.com/64/135/135702.png"
+                ],
+                [
+                    "name" => "Courgette",
+                    "defaultUnit" => "piece",
+                ],
             ],
-            "Bettrave",
-            "Brocoli",
-            "Banane",
-            "Épinard",
-            "Carotte",
-            "Chou",
-            "Courge",
-            "Échalotte",
-            "Concombre",
-            "Champignon",
-            "Haricot rouge",
-            "Endive",
-            "Haricot",
-            "Salade",
-            "Salade verte",
-            "Poivron",
-            "Pomme de terre",
-            "Pomme",
-            "Betternut",
-            "Epinard",
-            "Champigon",
-            "Choux fleur",
-            "Melon",
-            "Poireau",
-            "Citron",
-            "Persil",
-            "Oignon",
-            "Oignon rouge",
-            "Oignon blanc",
-            "Petit pois",
-            "Tomate cerise",
-            "Tomate à farcir",
-            "Courgette à farcir",
-            [
-                "name" => "Tomate",
-                "image" => "https://cdn-icons-png.flaticon.com/64/135/135702.png"
-            ],
-            "Courgette",
-        ],
         ],
         [
             "name" => "Fromage" ,
             "image" => "https://cdn-icons-png.flaticon.com/128/3753/3753482.png",
             "ingredients" => [
-            "Emmental rapé",
-            "Comté",
-            "Parmesan",
-            "Raclette",
-            "Vache qui rit",
-            "Kiri",
-            "Raclette",
-            "Fromage fondue",
-            "Mascarpone",
-            "Reblochon",
-            "Chèvre",
-            "Fromage frais",
-            "Mozzarella",
-            "Fromage à Croc Monssieur",
-            "Cheddar en tranche",
-            "Crème fraiche épaisse",
-            "Crème fraiche liquide",
-            "Divers",
-            "Beurre",
-        ],
+                [
+                    "name" => "Emmental rapé"
+                ],
+                [
+                    "name" => "Comté"
+                ],
+                [
+                    "name" => "Parmesan"
+                ],
+                [
+                    "name" => "Raclette"
+                ],
+                [
+                    "name" => "Vache qui rit"
+                ],
+                [
+                    "name" => "Kiri"
+                ],
+                [
+                    "name" => "Raclette"
+                ],
+                [
+                    "name" => "Fromage fondue"
+                ],
+                [
+                    "name" => "Mascarpone"
+                ],
+                [
+                    "name" => "Reblochon"
+                ],
+                [
+                    "name" => "Chèvre"
+                ],
+                [
+                    "name" => "Fromage frais"
+                ],
+                [
+                    "name" => "Mozzarella"
+                ],
+                [
+                    "name" => "Fromage à Croc Monssieur"
+                ],
+                [
+                    "name" => "Cheddar en tranche"
+                ],
+                [
+                    "name" => "Crème fraiche épaisse"
+                ],
+                [
+                    "name" => "Crème fraiche liquide"
+                ],
+                [
+                    "name" => "Divers"
+                ],
+                [
+                    "name" => "Beurre"
+                ],
+            ],
         ],
         [
             "name" => "Yaourt" ,
             "image" => "https://cdn-icons-png.flaticon.com/128/1047/1047510.png",
             "ingredients" => [
-            "Perle de lait",
-            "Pat patrouille",
-            "La laitière",
-            "Velouté",
-            "Yaourt nature",
-            "Compote en pot",
-            "Compote à boire",
-            "Compote",
-        ],
+                [
+                    "name" => "Perle de lait"
+                ],
+                [
+                    "name" => "Pat patrouille"
+                ],
+                [
+                    "name" => "La laitière"
+                ],
+                [
+                    "name" => "Velouté"
+                ],
+                [
+                    "name" => "Yaourt nature"
+                ],
+                [
+                    "name" => "Compote en pot"
+                ],
+                [
+                    "name" => "Compote à boire"
+                ],
+                [
+                    "name" => "Compote"
+                ],
+            ],
         ],
         [
             "name" => "Gâteau" ,
             "image" => 'https://cdn-icons-png.flaticon.com/128/2435/2435678.png',
             "ingredients" => [
-            "Figolu",
-            "BN",
-            "Chamonix",
-            "Barquette chocolat",
-            "Barquette fraise",
-            "The LU",
-            "Boudoire",
-            "Biscuit cuillère",
-            "Speculos",
-        ],
+                [
+                    "name" => "Figolu"
+                ],
+                [
+                    "name" => "BN"
+                ],
+                [
+                    "name" => "Chamonix"
+                ],
+                [
+                    "name" => "Barquette chocolat"
+                ],
+                [
+                    "name" => "Barquette fraise"
+                ],
+                [
+                    "name" => "The LU"
+                ],
+                [
+                    "name" => "Boudoire"
+                ],
+                [
+                    "name" => "Biscuit cuillère"
+                ],
+                [
+                    "name" => "Speculos"
+                ],
+            ],
         ],
         [
             "name" => "Bébé" ,
-            "image" => "images/department_baby.png",
+            "image" => "images/department/bebe.png",
             "ingredients" => [
-            "Lait",
-            "Couche",
-            "Lingette",
-        ],
+                [
+                    "name" => "Lait 1er âge"
+                ],
+                [
+                    "name" => "Lait 2e âge"
+                ],
+                [
+                    "name" => "Lait 3e âge"
+                ],
+                [
+                    "name" => "Couche"
+                ],
+                [
+                    "name" => "Lingette"
+                ],
+            ],
         ],
         [
             "name" => "Apéritif" ,
             "image" => "https://cdn-icons-png.flaticon.com/128/3814/3814603.png",
             "ingredients" => [
-            "Chips",
-            "Cacahuète",
-            "Chips ondulé",
-            "Chips aux vinaigre",
-            "Chipster",
-            "Mini pizza",
-            "Cone 3D",
-            "Springle",
-        ],
+                [
+                    "name" => "Chips"
+                ],
+                [
+                    "name" => "Cacahuète"
+                ],
+                [
+                    "name" => "Chips ondulé"
+                ],
+                [
+                    "name" => "Chips aux vinaigre"
+                ],
+                [
+                    "name" => "Chipster"
+                ],
+                [
+                    "name" => "Mini pizza"
+                ],
+                [
+                    "name" => "Cone 3D"
+                ],
+                [
+                    "name" => "Springle"
+                ],
+            ],
         ],
         [
             "name" => "Viande" ,
             "image" => "https://cdn-icons-png.flaticon.com/128/1134/1134447.png",
             "ingredients" => [
-            "Aiguilette de poulet",
-            "Steack",
-            "Dinde",
-            "Poulet",
-            "Saumon",
-            "Poisson",
-            "Chorizzo",
-            "Jambon cru",
-            "Jambon blanc",
-            "Bœuf",
-            "Bœuf bourguignon",
-            "Jambon",
-            "Blanquette de veau",
-            "Chair à saucisse",
-            "Cote de porc",
-            "Agneau",
-            "Veau",
-            "Saucisse",
-            "Merguez",
-            "Charcuterie",
-            "Lardon"
-        ],
+                [
+                    "name" => "Aiguilette de poulet"
+                ],
+                [
+                    "name" => "Cuisse de poulet"
+                ],
+                [
+                    "name" => "Steack"
+                ],
+                [
+                    "name" => "Dinde"
+                ],
+                [
+                    "name" => "Poulet"
+                ],
+                [
+                    "name" => "Saumon"
+                ],
+                [
+                    "name" => "Poisson"
+                ],
+                [
+                    "name" => "Knacki"
+                ],
+                [
+                    "name" => "Chorizzo"
+                ],
+                [
+                    "name" => "Jambon cru"
+                ],
+                [
+                    "name" => "Jambon blanc"
+                ],
+                [
+                    "name" => "Bœuf"
+                ],
+                [
+                    "name" => "Bœuf bourguignon"
+                ],
+                [
+                    "name" => "Jambon"
+                ],
+                [
+                    "name" => "Blanquette de veau"
+                ],
+                [
+                    "name" => "Chair à saucisse"
+                ],
+                [
+                    "name" => "Cote de porc"
+                ],
+                [
+                    "name" => "Agneau"
+                ],
+                [
+                    "name" => "Veau"
+                ],
+                [
+                    "name" => "Saucisse"
+                ],
+                [
+                    "name" => "Saucisson"
+                ],
+                [
+                    "name" => "Saucisson fouet"
+                ],
+                [
+                    "name" => "Saucisson st agaune"
+                ],
+                [
+                    "name" => "Merguez"
+                ],
+                [
+                    "name" => "Charcuterie"
+                ],
+                [
+                    "name" => "Lardon"
+                ]
+            ],
         ],
         [
             "name" => "Alcool" ,
             "image" => "https://cdn-icons-png.flaticon.com/128/920/920541.png",
             "ingredients" => [
-            "Bière blonde",
-            "Bière artisinale",
-            "Vin blanc cuisine",
-            "Vin blanc table",
-            "Vin rouge cuisine",
-            "Vin rouge table",
-        ],
+                [
+                    "name" => "Bière blonde"
+                ],
+                [
+                    "name" => "Bière artisinale"
+                ],
+                [
+                    "name" => "Vin blanc cuisine"
+                ],
+                [
+                    "name" => "Vin blanc table"
+                ],
+                [
+                    "name" => "Vin rouge cuisine"
+                ],
+                [
+                    "name" => "Vin rouge table"
+                ],
+            ],
         ],
         [
             "name" => "Boisson" ,
             "image" => "https://cdn-icons-png.flaticon.com/128/2405/2405597.png",
             "ingredients" => [
-            "Schweps tonic",
-            "Sirop fruit rouge",
-            "Ice tea green",
-        ],
+                [
+                    "name" => "Schweps tonic"
+                ],
+                [
+                    "name" => "Sirop fruit rouge"
+                ],
+                [
+                    "name" => "Ice tea green"
+                ],
+            ],
         ],
         [
             "name" => "Surgelé" ,
             "image" => "https://cdn-icons-png.flaticon.com/128/3082/3082004.png",
             "ingredients" => [
-            "Steack haché",
-            "Viande hachée",
-            "Petit pois surgelé",
-            "Épinard surgelé",
-            "Framboise surgelée",
-            "Nuggets",
-            "Cordon bleu",
-            "Frite",
-        ],
+                [
+                    "name" => "Steack haché"
+                ],
+                [
+                    "name" => "Viande hachée"
+                ],
+                [
+                    "name" => "Petit pois surgelé"
+                ],
+                [
+                    "name" => "Épinard surgelé"
+                ],
+                [
+                    "name" => "Framboise surgelée"
+                ],
+                [
+                    "name" => "Nuggets"
+                ],
+                [
+                    "name" => "Cordon bleu"
+                ],
+                [
+                    "name" => "Frite"
+                ],
+            ],
         ],
         [
             "name" => "Conserve" ,
             "image" => "https://cdn-icons-png.flaticon.com/128/2916/2916046.png",
             "ingredients" => [
-            "Maïs",
-            "Petit pois",
-            "Petit pois carotte",
-            "Haricot",
-            "Olive",
-            "Capre",
-            "Olive verte",
-            "Concentré de tomate",
-            "Olive noir",
-            "Gratin daufinois",
-            "Confiture",
-            [
-                "name" => "Nutella",
-                "image" => "https://cdn-icons-png.flaticon.com/64/135/135605.png"
+                [
+                    "name" => "Maïs"
+                ],
+                [
+                    "name" => "Petit pois"
+                ],
+                [
+                    "name" => "Petit pois carotte"
+                ],
+                [
+                    "name" => "Haricot"
+                ],
+                [
+                    "name" => "Olive"
+                ],
+                [
+                    "name" => "Capre"
+                ],
+                [
+                    "name" => "Olive verte"
+                ],
+                [
+                    "name" => "Concentré de tomate"
+                ],
+                [
+                    "name" => "Olive noir"
+                ],
+                [
+                    "name" => "Gratin daufinois"
+                ],
+                [
+                    "name" => "Confiture"
+                ],
+                [
+                    "name" => "Nutella",
+                    "image" => "https://cdn-icons-png.flaticon.com/64/135/135605.png"
+                ],
+                [
+                    "name" => "Salade de Fruit"
+                ],
+                [
+                    "name" => "Compote en bocal"
+                ],
             ],
-            "Salade de Fruit",
-            "Compote en bocal",
-        ],
         ],
         [
             "name" => "Aide pâtissier",
             "image" => "https://cdn-icons-png.flaticon.com/128/992/992767.png",
             "ingredients" => [
-            "Farine",
-            "Farine pain",
-            "Farine brioche",
-            "Sucre",
-            "Maïzena",
-            "Pépite de chocolat",
-            "Gélatine",
-            "Sucre roux",
-            "Levure patissière",
-            "Levure boulangère",
-            "Vanille",
-            "Chocolat",
-            "Chocolat liquide",
-            "Caramel",
-            "Gélatine",
-            "Agaragar",
-            "Caramel",
-            "Caramel liquide",
-        ],
+                [
+                    "name" => "Farine",
+                ],
+                [
+                    "name" => "Farine pain",
+                ],
+                [
+                    "name" => "Farine brioche",
+                ],
+                [
+                    "name" => "Sucre",
+                ],
+                [
+                    "name" => "Maïzena",
+                ],
+                [
+                    "name" => "Pépite de chocolat",
+                ],
+                [
+                    "name" => "Gélatine",
+                ],
+                [
+                    "name" => "Sucre roux",
+                ],
+                [
+                    "name" => "Levure patissière",
+                ],
+                [
+                    "name" => "Levure boulangère",
+                ],
+                [
+                    "name" => "Vanille",
+                ],
+                [
+                    "name" => "Chocolat",
+                ],
+                [
+                    "name" => "Chocolat liquide",
+                ],
+                [
+                    "name" => "Caramel",
+                ],
+                [
+                    "name" => "Gélatine",
+                ],
+                [
+                    "name" => "Agaragar",
+                ],
+                [
+                    "name" => "Caramel",
+                ],
+                [
+                    "name" => "Caramel liquide",
+                ],
+            ],
         ],
         [
             "name" => "Céréale" ,
             "image" => "https://cdn-icons-png.flaticon.com/128/5009/5009812.png",
             "ingredients" => [
-            "Riz",
-            "Blé",
-            "Boulgour",
-            "Quinoa",
-            "Lentille",
-            "Risotto",
-            "Boulgoure fin",
-            "Nouille",
-            "Pate",
-            "Nouille chinoise",
-            "Pate lasagne",
-            "Soja",
-            "Raviole",
-            "Purée",
-            "Vermicelle",
-        ],
+                [
+                    "name" => "Riz",
+                ],
+                [
+                    "name" => "Blé",
+                ],
+                [
+                    "name" => "Boulgour",
+                ],
+                [
+                    "name" => "Quinoa",
+                ],
+                [
+                    "name" => "Lentille",
+                ],
+                [
+                    "name" => "Risotto",
+                ],
+                [
+                    "name" => "Boulgoure fin",
+                ],
+                [
+                    "name" => "Nouille",
+                ],
+                [
+                    "name" => "Pate",
+                    "defaultUnit" => "kilo",
+                ],
+                [
+                    "name" => "Pate lasagne",
+                ],
+                [
+                    "name" => "Pate ramen",
+                ],
+                [
+                    "name" => "Coquilette",
+                ],
+                [
+                    "name" => "Spaguetti",
+                ],
+                [
+                    "name" => "Nouille chinoise",
+                ],
+                [
+                    "name" => "Soja",
+                ],
+                [
+                    "name" => "Raviole",
+                ],
+                [
+                    "name" => "Purée",
+                ],
+                [
+                    "name" => "Vermicelle",
+                ],
+            ],
         ],
         [
             "name" => "Traiteur" ,
             "image_old" => "https://cdn-icons-png.flaticon.com/128/2674/2674064.png",
-            "image" => "images/department_traiteur.png",
+            "image" => "images/department/traiteur.png",
             "ingredients" => [
-            "Pizza",
-            "Soupe",
-            "Galette",
-            "Pate pizza",
-            "Pate feuilletée",
-            "Riste aubergine",
-            "Pate brisée",
-            "Pate sablée",
-            "Gnocci",
-            "Quenelle",
-            "Hachis parmentier",
-            "Lasagne",
-            "Poisson pané",
-            "Nem",
-            "Bouillon",
-            "Bouillon de bœuf",
-            "Bouillon de légume",
-        ],
+                [
+                    "name" => "Pizza",
+                ],
+                [
+                    "name" => "Soupe",
+                ],
+                [
+                    "name" => "Galette",
+                ],
+                [
+                    "name" => "Pate pizza",
+                ],
+                [
+                    "name" => "Pate feuilletée",
+                ],
+                [
+                    "name" => "Riste aubergine",
+                ],
+                [
+                    "name" => "Pate brisée",
+                ],
+                [
+                    "name" => "Pate sablée",
+                ],
+                [
+                    "name" => "Gnocci",
+                ],
+                [
+                    "name" => "Quenelle",
+                ],
+                [
+                    "name" => "Hachis parmentier",
+                ],
+                [
+                    "name" => "Lasagne",
+                ],
+                [
+                    "name" => "Poisson pané",
+                ],
+                [
+                    "name" => "Nem",
+                ],
+                [
+                    "name" => "Bouillon",
+                ],
+                [
+                    "name" => "Bouillon de bœuf",
+                ],
+                [
+                    "name" => "Bouillon de légume",
+                ],
+            ],
         ],
         [
             "name" => "Produit ménager",
             "image" => "https://cdn-icons-png.flaticon.com/128/3899/3899392.png",
             "ingredients" => [
-            "Sol",
-            "Javel",
-            "Vitre",
-            "Bicarbonate",
-            "Lingette",
-        ],
+                [
+                    "name" => "Sol",
+                ],
+                [
+                    "name" => "Javel",
+                ],
+                [
+                    "name" => "Vitre",
+                ],
+                [
+                    "name" => "Bicarbonate",
+                ],
+                [
+                    "name" => "Lingette",
+                ],
+            ],
         ],
         [
             "name" => "Boulangerie" ,
             "image" => "https://cdn-icons-png.flaticon.com/128/3081/3081918.png",
             "ingredients" => [
-            "Pain",
-            "Pain de mie",
-            "Pain panini",
-            "Pain tartine",
-            "Pain baggle",
-            "Pain à burger",
-            "Brioche",
-            "Biscotte",
-            "Cracotte",
-            "Pain au lait",
-        ],
+                [
+                    "name" => "Pain",
+                ],
+                [
+                    "name" => "Pain de mie",
+                ],
+                [
+                    "name" => "Pain panini",
+                ],
+                [
+                    "name" => "Pain tartine",
+                ],
+                [
+                    "name" => "Pain baggle",
+                ],
+                [
+                    "name" => "Pain à burger",
+                ],
+                [
+                    "name" => "Brioche",
+                ],
+                [
+                    "name" => "Biscotte",
+                ],
+                [
+                    "name" => "Cracotte",
+                ],
+                [
+                    "name" => "Pain au lait",
+                ],
+            ],
         ],
         [
             "name" => "Sauce" ,
             "image" => "https://cdn-icons-png.flaticon.com/128/3106/3106132.png",
             "ingredients" => [
-            "Vinaigre",
-            "Vinaigre balsamique",
-            "Vinaigre xérès",
-            "Huile",
-            "Huile d'olive",
-            "Béarnaise",
-            "Ketchup",
-            "Mayonnaise",
-            "Bolognaise",
-            "4 fromages",
-            "Pesto",
-            "Tartare",
-            "BBQ",
-            "Sauce soja",
-            "Sauce napolitaine",
-            "Sauce tomate",
-            "Sauce nuoc man",
-        ],
+                [
+                    "name" => "Vinaigre",
+                ],
+                [
+                    "name" => "Vinaigre balsamique",
+                ],
+                [
+                    "name" => "Vinaigre xérès",
+                ],
+                [
+                    "name" => "Huile",
+                ],
+                [
+                    "name" => "Huile d'olive",
+                ],
+                [
+                    "name" => "Béarnaise",
+                ],
+                [
+                    "name" => "Ketchup",
+                ],
+                [
+                    "name" => "Mayonnaise",
+                ],
+                [
+                    "name" => "Bolognaise",
+                ],
+                [
+                    "name" => "Sauce 4 fromages",
+                ],
+                [
+                    "name" => "Pesto",
+                ],
+                [
+                    "name" => "Tartare",
+                ],
+                [
+                    "name" => "BBQ",
+                ],
+                [
+                    "name" => "Sauce soja",
+                ],
+                [
+                    "name" => "Sauce napolitaine",
+                ],
+                [
+                    "name" => "Sauce tomate",
+                ],
+                [
+                    "name" => "Sauce nuoc man",
+                ],
+            ],
         ],
         [
             "name" => "Animal",
             "image" => "https://cdn-icons-png.flaticon.com/128/2619/2619232.png",
             "ingredients" => [
-                "Croquette",
-                "Litière",
+                [
+                    "name" => "Croquette",
+                ],
+                [
+                    "name" => "Litière",
+                ],
             ]
         ],
         [
             "name" => "Divers",
             "ingredients" => [
-                "Œuf",
-                "Poivre",
-                "Cornichon",
-                "Chocolat en poudre",
-                "Miel",
-                "Sel",
-                "Bouquet garni",
+                [
+                    "name" => "Œuf",
+                    "defaultUnit" => "piece",
+                ],
+                [
+                    "name" => "Lait",
+                ],
+                [
+                    "name" => "Poivre",
+                ],
+                [
+                    "name" => "Cornichon",
+                ],
+                [
+                    "name" => "Chocolat en poudre",
+                ],
+                [
+                    "name" => "Miel",
+                ],
+                [
+                    "name" => "Sel",
+                ],
+                [
+                    "name" => "Bouquet garni",
+                ],
             ],
         ],
         [
             "name" => "Cuisine du monde",
             "image" => "https://cdn-icons-png.flaticon.com/128/1717/1717511.png",
             "ingredients" => [
-                "Tortilla",
-                "Feuille de brique",
-                "Épice guacamole",
-                "Épice viande",
-                "Épice",
-                "Curry",
-                "Ramen",
+                [
+                    "name" => "Tortilla",
+                ],
+                [
+                    "name" => "Feuille de brique",
+                ],
+                [
+                    "name" => "Épice guacamole",
+                ],
+                [
+                    "name" => "Épice viande",
+                ],
+                [
+                    "name" => "Épice",
+                ],
+                [
+                    "name" => "Curry",
+                ],
+                [
+                    "name" => "Ramen",
+                ],
             ],
         ],
     ];
@@ -387,9 +1011,18 @@ class AppFixtures extends Fixture
         [
             "name" => "Pates carbonara",
             "type" => Recipe::TYPE_MAIN_COURSE,
+            "people" => 4,
             "ingredients" => [
-                "Pate",
-                "Œuf",
+                [
+                    "ingredient" => "Pate",
+                    "quantity" => 500,
+                    "unit" => "gramme"
+                ],
+                [
+                    "ingredient" => "Œuf",
+                    "quantity" => 4,
+                    "unit" => "piece"
+                ],
                 "Crème fraiche épaisse",
                 "Lardon",
                 "Parmesan"
@@ -432,6 +1065,24 @@ class AppFixtures extends Fixture
                 "Mayonnaise",
                 "Salade verte",
             ]
+        ],
+        [
+            "name" => "Tarte tatin",
+            "type" => Recipe::TYPE_DESSERT,
+            "ingredients" => [
+                "Beurre",
+                "Pomme golden",
+                "Pate feuilletée",
+                "Sucre",
+            ],
+        ],
+        [
+            "name" => "Ramen",
+            "type" => Recipe::TYPE_MAIN_COURSE,
+            "ingredients" => [
+                "Bœuf",
+                "Pate ramen",
+            ],
         ],
         [
             "name" => "Salade Caesar",
@@ -1183,6 +1834,9 @@ class AppFixtures extends Fixture
         ],
     ];
 
+    private $ingredients = [];
+    private $recipes = [];
+    private $units = [];
 
     public function __construct(private SluggerInterface $slugger)
     {
@@ -1194,56 +1848,19 @@ class AppFixtures extends Fixture
         $faker = Factory::create("fr_FR");
         $faker->addProvider(new \Bluemmb\Faker\PicsumPhotosProvider($faker));
 
-        $ingredients = [];
-        $recipes = [];
+        $this->loadUnits($manager);
 
-        foreach (self::INGREDIENTS as $key => $departmentArray) {
-            $departmentImage = $departmentArray["image"] ?? null;
-            $department = new Department();
-            $department->setName($departmentArray["name"]);
-            $department->setSlug(strtolower($this->slugger->slug($departmentArray["name"])));
-            if ($departmentImage !== null) {
-                $department->setImage($departmentImage);
-            }
-            $manager->persist($department);
-            foreach ($departmentArray["ingredients"] as $ingredientArray) {
-                if (is_array($ingredientArray)) {
-                    $ingredientName = $ingredientArray["name"] ?? "Unknown";
-                    $ingredientImage = $ingredientArray["image"] ?? $faker->imageUrl(64, 64, true);
-                } else {
-                    $ingredientName = $ingredientArray;
-                    $ingredientImage = $faker->imageUrl(64, 64, true);
-                }
-                $ingredient = new Ingredient();
-                $ingredient->setName($ingredientName);
-                $ingredient->setDepartment($department);
-                $ingredient->setSlug(strtolower($this->slugger->slug($ingredientName)));
-                $ingredient->setImage($ingredientImage);
-                $ingredients[$ingredientName] = $ingredient;
-                $manager->persist($ingredient);
-            }
-        }
+        $this->loadConversions($manager);
 
-        foreach (self::RECIPES as $recipeArray)
-        {
-            $recipe = new Recipe();
-            $recipe
-                ->setName($recipeArray["name"])
-                ->setSlug(strtolower($this->slugger->slug($recipeArray["name"])))
-                ->setType($recipeArray["type"]);
-            foreach ($recipeArray["ingredients"] as $ingredientName) {
-                $ingredient = $ingredients[$ingredientName];
-                $recipe->addIngredient($ingredient);
-            }
-            $recipes[$recipeArray["name"]] = $recipe;
-            $manager->persist($recipe);
-        }
+        $this->loadIngredients($manager);
+
+        $this->loadRecipes($manager);
 
         $shoppingList = new ShoppingList();
         $shoppingList->setDate(new \DateTime("25.10.2021"));
         $shoppingList->setLocked(false);
         $shoppingListRows = [];
-        foreach ($recipes as $recipe) {
+        foreach ($this->recipes as $recipe) {
             if ($faker->boolean(0)) {
                 $shoppingList->addRecipe($recipe);
                 foreach ($recipe->getIngredients() as $ingredient) {
@@ -1265,5 +1882,106 @@ class AppFixtures extends Fixture
         $manager->persist($shoppingList);
 
         $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
+    private function loadUnits(ObjectManager $manager)
+    {
+        foreach (self::UNITS as $unitArray) {
+            $unit = new Unit();
+            $unit
+                ->setName($unitArray["name"])
+                ->setAbbreviation($unitArray["abbreviation"]);
+            $this->units[$unit->getName()] = $unit;
+            $manager->persist($unit);
+        }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
+    private function loadConversions(ObjectManager $manager)
+    {
+        foreach (self::CONVERSIONS as $conversionArray) {
+            $conversion = new Conversion();
+            $conversion
+                ->setStartUnit($this->units[$conversionArray["startUnit"]])
+                ->setEndUnit($this->units[$conversionArray["endUnit"]])
+                ->setCoefficient($conversionArray["coefficient"])
+                ->setIntercept($conversionArray["intercept"] ?? 0);
+
+            $manager->persist($conversion);
+        }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
+    private function loadIngredients(ObjectManager $manager)
+    {
+        foreach (self::INGREDIENTS as $departmentArray) {
+
+            $departmentImage = $departmentArray["image"] ?? null;
+            $department = new Department();
+            $department->setName($departmentArray["name"]);
+            $department->setSlug(strtolower($this->slugger->slug($departmentArray["name"])));
+            $department->setImage($departmentImage ?? "https://cdn-icons-png.flaticon.com/128/699/699044.png");
+            $manager->persist($department);
+
+            foreach ($departmentArray["ingredients"] as $ingredientArray) {
+                if (array_key_exists("defaultUnit", $ingredientArray)) {
+                    $ingredientDefaultUnit = $this->units[$ingredientArray["defaultUnit"]] ?? null;
+                } else {
+                    $ingredientDefaultUnit = null;
+                }
+                $ingredient = new Ingredient();
+                $ingredient
+                    ->setName($ingredientArray["name"])
+                    ->setDepartment($department)
+                    ->setDefaultUnit($ingredientDefaultUnit)
+                    ->setSlug(strtolower($this->slugger->slug($ingredientArray["name"])))
+                    ->setImage($ingredientArray["image"] ?? $department->getImage());
+                $this->ingredients[$ingredientArray["name"]] = $ingredient;
+                $manager->persist($ingredient);
+            }
+        }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
+    private function loadRecipes(ObjectManager $manager)
+    {
+        foreach (self::RECIPES as $recipeArray)
+        {
+            $recipe = new Recipe();
+            $recipe
+                ->setName($recipeArray["name"])
+                ->setSlug(strtolower($this->slugger->slug($recipeArray["name"])))
+                ->setType($recipeArray["type"]);
+            foreach ($recipeArray["ingredients"] as $recipeRowArray) {
+                if (is_array($recipeRowArray)) {
+                    $ingredientName = $recipeRowArray["ingredient"];
+                    $ingredientQuantity = $recipeRowArray["quantity"] ?? null;
+                    $ingredientUnitName = $recipeRowArray["unit"] ?? "non exist";
+                    $ingredientUnit = $this->units[$ingredientUnitName] ?? null;
+                } else {
+                    $ingredientName = $recipeRowArray;
+                    $ingredientQuantity = null;
+                    $ingredientUnit = null;
+                }
+                $recipeRow = new RecipeRow();
+                $recipeRow
+                    ->setIngredient($this->ingredients[$ingredientName])
+                    ->setRecipe($recipe)
+                    ->setQuantity($ingredientQuantity)
+                    ->setUnit($ingredientUnit);
+                $manager->persist($recipeRow);
+            }
+            $this->recipes[$recipeArray["name"]] = $recipe;
+            $manager->persist($recipe);
+        }
     }
 }
