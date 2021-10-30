@@ -44,9 +44,22 @@ class UnitService
             return $quantity;
         }
 
+        foreach ($ingredient->getConversions() as $conversion)
+        {
+            if (
+                $conversion->getStartUnit() === $unit
+                && $conversion->getEndUnit() === $ingredient->getDefaultUnit()
+            ) {
+                return $quantity * $conversion->getCoefficient() + $conversion->getIntercept();
+            }
+        }
+
         foreach ($unit->getConversions() as $conversion)
         {
-            if ($conversion->getEndUnit() === $ingredient->getDefaultUnit()) {
+            if (
+                $conversion->getStartUnit() === $unit
+                && $conversion->getEndUnit() === $ingredient->getDefaultUnit()
+            ) {
                 return $quantity * $conversion->getCoefficient() + $conversion->getIntercept();
             }
         }

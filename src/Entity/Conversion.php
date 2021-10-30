@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ConversionRepository::class)
+ * @ORM\InheritanceType("JOINED")
  */
 class Conversion
 {

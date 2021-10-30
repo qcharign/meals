@@ -9,6 +9,7 @@ use App\Entity\Recipe;
 use App\Entity\RecipeRow;
 use App\Entity\ShoppingList;
 use App\Entity\ShoppingListRow;
+use App\Entity\SpecificConversion;
 use App\Entity\Unit;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -64,6 +65,10 @@ class AppFixtures extends Fixture
             "name" => "bol",
             "abbreviation" => "bol"
         ],
+        [
+            "name" => "plaquette",
+            "abbreviation" => "plaquette"
+        ],
     ];
 
     const CONVERSIONS = [
@@ -107,6 +112,15 @@ class AppFixtures extends Fixture
             "endUnit" => "kilo",
             "coefficient" => 0.001,
         ],
+    ];
+
+    const SPECIFIC_CONVERSION = [
+        [
+            "ingredient" => "Beurre",
+            "startUnit" => "gramme",
+            "endUnit" => "plaquette",
+            "coefficient" => 0.004
+        ]
     ];
 
     const INGREDIENTS = [
@@ -323,7 +337,9 @@ class AppFixtures extends Fixture
                     "name" => "Divers"
                 ],
                 [
-                    "name" => "Beurre"
+                    "name" => "Beurre",
+                    "defaultUnit" => "plaquette",
+                    "breakableDefaultUnit" => false,
                 ],
             ],
         ],
@@ -649,6 +665,8 @@ class AppFixtures extends Fixture
             "ingredients" => [
                 [
                     "name" => "Farine",
+                    "defaultUnit" => "kilo",
+                    "breakableDefaultUnit" => false,
                 ],
                 [
                     "name" => "Farine pain",
@@ -1179,8 +1197,16 @@ class AppFixtures extends Fixture
             "type" => Recipe::TYPE_MAIN_COURSE,
             "ingredients" => [
                 "Pate",
-                "Beurre",
-                "Farine",
+                [
+                    "ingredient" => "Beurre",
+                    "quantity" => "30",
+                    "unit" => "gramme",
+                ],
+                [
+                    "ingredient" => "Farine",
+                    "quantity" => "30",
+                    "unit" => "gramme",
+                ],
             ],
         ],
         [
@@ -1188,8 +1214,16 @@ class AppFixtures extends Fixture
             "type" => Recipe::TYPE_MAIN_COURSE,
             "ingredients" => [
                 "Choux fleur",
-                "Beurre",
-                "Farine",
+                [
+                    "ingredient" => "Beurre",
+                    "quantity" => "30",
+                    "unit" => "gramme",
+                ],
+                [
+                    "ingredient" => "Farine",
+                    "quantity" => "30",
+                    "unit" => "gramme",
+                ],
                 "Lait",
                 "Sel",
                 "Poivre",
@@ -1202,8 +1236,16 @@ class AppFixtures extends Fixture
             "type" => Recipe::TYPE_MAIN_COURSE,
             "ingredients" => [
                 "Courgette",
-                "Beurre",
-                "Farine",
+                [
+                    "ingredient" => "Beurre",
+                    "quantity" => "30",
+                    "unit" => "gramme",
+                ],
+                [
+                    "ingredient" => "Farine",
+                    "quantity" => "30",
+                    "unit" => "gramme",
+                ],
                 "Lait",
                 "Sel",
                 "Poivre",
@@ -1232,8 +1274,16 @@ class AppFixtures extends Fixture
             "type" => Recipe::TYPE_MAIN_COURSE,
             "ingredients" => [
                 "Quenelle",
-                "Beurre",
-                "Farine",
+                [
+                    "ingredient" => "Beurre",
+                    "quantity" => "30",
+                    "unit" => "gramme",
+                ],
+                [
+                    "ingredient" => "Farine",
+                    "quantity" => "30",
+                    "unit" => "gramme",
+                ],
                 "Lait",
                 "Sel",
                 "Poivre",
@@ -1854,6 +1904,8 @@ class AppFixtures extends Fixture
 
         $this->loadIngredients($manager);
 
+        $this->loadSpecificConvertion($manager);
+
         $this->loadRecipes($manager);
 
         $shoppingList = new ShoppingList();
@@ -1941,6 +1993,7 @@ class AppFixtures extends Fixture
                     ->setName($ingredientArray["name"])
                     ->setDepartment($department)
                     ->setDefaultUnit($ingredientDefaultUnit)
+                    ->setBreakableDefaultUnit($ingredientArray["breakableDefaultUnit"] ?? true)
                     ->setSlug(strtolower($this->slugger->slug($ingredientArray["name"])))
                     ->setImage($ingredientArray["image"] ?? $department->getImage());
                 $this->ingredients[$ingredientArray["name"]] = $ingredient;
@@ -1982,6 +2035,25 @@ class AppFixtures extends Fixture
             }
             $this->recipes[$recipeArray["name"]] = $recipe;
             $manager->persist($recipe);
+        }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
+    private function loadSpecificConvertion(ObjectManager $manager)
+    {
+        foreach (self::SPECIFIC_CONVERSION as $conversionArray)
+        {
+            $specificConversion = new SpecificConversion();
+            $specificConversion
+                ->setIngredient($this->ingredients[$conversionArray["ingredient"]])
+                ->setStartUnit($this->units[$conversionArray["startUnit"]])
+                ->setEndUnit($this->units[$conversionArray["endUnit"]])
+                ->setCoefficient($conversionArray["coefficient"] ?? 1)
+                ->setIntercept($conversionArray["intercept"] ?? 0);
+
+            $manager->persist($specificConversion);
         }
     }
 }

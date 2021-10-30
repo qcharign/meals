@@ -55,10 +55,21 @@ class Ingredient
      */
     private $defaultUnit;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $breakableDefaultUnit = true;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SpecificConversion::class, mappedBy="ingredient", orphanRemoval=true)
+     */
+    private $conversions;
+
     public function __construct()
     {
         $this->shoppingListRows = new ArrayCollection();
         $this->recipeRows = new ArrayCollection();
+        $this->conversions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -182,6 +193,48 @@ class Ingredient
     public function setDefaultUnit(?Unit $defaultUnit): self
     {
         $this->defaultUnit = $defaultUnit;
+
+        return $this;
+    }
+
+    public function getBreakableDefaultUnit(): ?bool
+    {
+        return $this->breakableDefaultUnit;
+    }
+
+    public function setBreakableDefaultUnit(bool $breakableDefaultUnit): self
+    {
+        $this->breakableDefaultUnit = $breakableDefaultUnit;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SpecificConversion[]
+     */
+    public function getConversions(): Collection
+    {
+        return $this->conversions;
+    }
+
+    public function addConversion(SpecificConversion $conversion): self
+    {
+        if (!$this->conversions->contains($conversion)) {
+            $this->conversions[] = $conversion;
+            $conversion->setIngredient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversion(SpecificConversion $conversion): self
+    {
+        if ($this->conversions->removeElement($conversion)) {
+            // set the owning side to null (unless already changed)
+            if ($conversion->getIngredient() === $this) {
+                $conversion->setIngredient(null);
+            }
+        }
 
         return $this;
     }
