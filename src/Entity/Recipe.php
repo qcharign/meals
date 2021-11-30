@@ -12,10 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Recipe
 {
-    const TYPE_STARTER = "starter";
-    const TYPE_MAIN_COURSE = "main course";
-    const TYPE_DESSERT = "dessert";
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -39,11 +35,6 @@ class Recipe
     private $shoppingLists;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $type;
-
-    /**
      * @ORM\OneToMany(targetEntity=RecipeRow::class, mappedBy="recipe", orphanRemoval=true)
      */
     private $rows;
@@ -52,6 +43,18 @@ class Recipe
      * @ORM\Column(type="integer", nullable=true)
      */
     private $peopleNumber;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="recipes")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $owner;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=RecipeType::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $type;
 
     public function __construct()
     {
@@ -115,18 +118,6 @@ class Recipe
         return $this;
     }
 
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
     /**
      * @return Collection|RecipeRow[]
      */
@@ -181,5 +172,29 @@ class Recipe
             }
         }
         return false;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    public function getType(): ?RecipeType
+    {
+        return $this->type;
+    }
+
+    public function setType(?RecipeType $type): self
+    {
+        $this->type = $type;
+
+        return $this;
     }
 }

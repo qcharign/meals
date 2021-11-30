@@ -4,6 +4,7 @@ twig:
         - bootstrap_4_layout.html.twig
     globals:
         recipeRepository: "@App\\Repository\\RecipeRepository"
+        recipeTypeRepository: "@App\\Repository\\RecipeTypeRepository"
         ingredientRepository: "@App\\Repository\\IngredientRepository"
         departmentRepository: "@App\\Repository\\DepartmentRepository"
         shoppingListRepository: "@App\\Repository\\ShoppingListRepository"

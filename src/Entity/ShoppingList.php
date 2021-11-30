@@ -142,10 +142,20 @@ class ShoppingList
     }
 
     /**
-     * @param string $type
+     * @param RecipeType $type
+     * @return Collection
+     */
+    public function getRecipeByType(RecipeType $type): Collection
+    {
+        $typeRecipes = $this->recipes->filter(fn(Recipe $recipe) => $recipe->getType() === $type);
+        return $typeRecipes;
+    }
+
+    /**
+     * @param RecipeType $type
      * @return int
      */
-    public function typeNumber(string $type): int
+    public function typeNumber(RecipeType $type): int
     {
         $typeRecipes = $this->recipes->filter(fn(Recipe $recipe) => $recipe->getType() === $type);
         return $typeRecipes->count();

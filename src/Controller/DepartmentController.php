@@ -17,7 +17,7 @@ class DepartmentController extends AbstractController
         ]);
     }
 
-    #[Route('/department/{slug}', name: 'department_show')]
+    #[Route('/department/{slug}', name: 'department_show', priority: -1)]
     public function show($slug, DepartmentRepository $departmentRepository): Response
     {
         $department = $departmentRepository->findOneBy(["slug" => $slug]);

@@ -16,7 +16,7 @@ class IngredientController extends AbstractController
         ]);
     }
 
-    #[Route('/ingredient/{slug}', name: 'ingredient_show')]
+    #[Route('/ingredient/{slug}', name: 'ingredient_show', priority: -1)]
     public function show(): Response
     {
         return $this->render('desktop/ingredient/show.html.twig', [

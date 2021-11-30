@@ -5,14 +5,25 @@
 {% endif %}
 <li
         id="recipe_{{ recipe.id }}"
-        role="button"
-        data-action="btn-ajax"
-        class="list-group-item list-group-item-action"
-        data-url="{{ url }}">
-    {% if shoppingList is null or not shoppingList.recipes.contains(recipe) %}
-        <i data-loader="replace" class="far fa-square me-1"></i>
-    {% elseif shoppingList.recipes.contains(recipe) %}
-        <i data-loader="replace" class="far fa-check-square me-1"></i>
-    {% endif %}
-    {{ recipe.name }}
+        class="list-group-item d-flex list-group-item-action">
+    <div
+            role="button"
+            class="flex-fill"
+            data-action="btn-ajax"
+            data-url="{{ url }}">
+        {% if shoppingList is null or not shoppingList.recipes.contains(recipe) %}
+            <i data-loader="replace" class="far fa-square me-1"></i>
+        {% elseif shoppingList.recipes.contains(recipe) %}
+            <i data-loader="replace" class="far fa-check-square me-1"></i>
+        {% endif %}
+        {{ recipe.name }}
+    </div>
+    <span
+            role="button"
+            style="line-height: inherit;"
+            data-action="link"
+            data-url="{{ path("recipe_show", {"slug" : recipe.slug}) }}"
+            class="badge float-end bg-primary rounded-pill me-1">
+        details
+    </span>
 </li>

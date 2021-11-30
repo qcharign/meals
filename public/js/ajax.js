@@ -21,7 +21,15 @@ $(document).ready(function(){
             console.log(data);
             showAlerts(data);
             showViews(data, event.target);
+        }).fail(function() {
+            showAlerts({"alerts":[{"status":"error", "message":"Une erreur est survenue"}]});
         });
+    });
+
+    $(document).on("click", "[data-action='link']", function(event) {
+        var url = $(this).data("url");
+        console.log("redirect to "+url);
+        window.location.href = url;
     });
 
     function showAlerts(data) {

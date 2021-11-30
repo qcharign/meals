@@ -1,5 +1,5 @@
 {% set active = "recipe" %}
-{%  extends "base.html.twig" %}
+{% extends "desktop/base.html.twig" %}
 
 {% block title %}
     Recette : {{ recipe.name }}
@@ -7,7 +7,36 @@
 
 {% block body %}
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ path("recipe_index") }}">Accueil</a></li>
-        <li class="breadcrumb-item active"><a href="#">{{ recipe.name }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path("recipe_index") }}">Recettes</a></li>
+        <li class="breadcrumb-item"><a href="{{ path("recipe_type", {"id":recipe.type.id}) }}">{{ recipe.type.name|capitalize }}</a></li>
+        <li class="breadcrumb-item active"><a href="#">{{ recipe.name|capitalize }}</a></li>
     </ol>
+
+    <h1>{{ recipe.name }}</h1>
+    <h2>Ingrédients</h2>
+    <div class="row">
+        <div class="col-lg-4">
+            <ul class="list-group">
+                {% for row in recipe.rows %}
+                    <li class="list-group-item d-flex align-item-center" style="height: 42px">
+                            {% if row.unit is not null%}
+                                <span class="me-1">
+                                    {{ row.quantity ~ row.unit.abbreviation }}
+                                    {% if row.unit.abbreviation != "" %}de{% endif %}
+                                </span>
+                            {% else %}
+                                {{ row.quantity }}
+                            {% endif %}
+                        <strong>{{ row.ingredient.name }}</strong>
+                        <span class="flex-fill"></span>
+                        <img
+                                class="align-self-center"
+                                style="height: 32px"
+                                src="{{ absolute_url(asset(row.ingredient.image)) }}"
+                                alt="row.ingredient.name">
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 {% endblock %}

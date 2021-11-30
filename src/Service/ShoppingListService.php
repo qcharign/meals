@@ -8,6 +8,7 @@ use App\Entity\Recipe;
 use App\Entity\RecipeRow;
 use App\Entity\ShoppingList;
 use App\Entity\ShoppingListRow;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ShoppingListService
@@ -87,6 +88,21 @@ class ShoppingListService
             $this->manager->remove($shoppingListRow);
         } else {
             $shoppingListRow->addQuantity(-$quantity);
+        }
+    }
+
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param User         $user
+     * @param int          $recipeNumber
+     */
+    public function shoppingListAddRandomRecipes(ShoppingList $shoppingList, User $user, int $recipeNumber)
+    {
+        $userRecipes = $this->manager->getRepository(Recipe::class)->findBy(["owner" => $user, "type" => Recipe::TYPE_MAIN_COURSE]);
+        $randomRecipes = array_rand($userRecipes, $recipeNumber);
+        foreach ($randomRecipes as $recipe) {
+            $this->shoppingListAddRecipe($shoppingList, $recipe);
         }
     }
 

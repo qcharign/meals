@@ -1,0 +1,24 @@
+{% set active = "recipe" %}
+{% extends 'desktop/base.html.twig' %}
+
+{% block title %}Recettes{% endblock %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path("recipe_index") }}">Recettes</a></li>
+        <li class="breadcrumb-item active"><a href="{{ path("recipe_type", {"id":recipeType.id}) }}">{{ recipeType.name|capitalize }}</a></li>
+    </ol>
+
+    <div class="row">
+        <div class="col">
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-action active">
+                    {{ recipeType.name|capitalize }}
+                </li>
+                {% for recipe in recipeRepository.findBy({"type": recipeType}, {"name": "ASC"}) %}
+                    {% include "desktop/recipe/shared/_recipe_row.html.twig" %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

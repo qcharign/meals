@@ -158,7 +158,7 @@ class ShoppingListController extends BaseController
 
         $ingredient = $ingredientRepository->find($id_ingredient);
 
-        $shoppingListService->shoppingListAddIngredient($shoppingList, $ingredient, false);
+        $shoppingListService->shoppingListAddIngredient($shoppingList, $ingredient, 1);
         $manager->flush();
 
         if ($request->isXmlHttpRequest()) {
@@ -196,7 +196,7 @@ class ShoppingListController extends BaseController
 
         $ingredient = $ingredientRepository->find($id_ingredient);
 
-        $shoppingListService->shoppingListRemoveIngredient($shoppingList, $ingredient, false);
+        $shoppingListService->shoppingListRemoveIngredient($shoppingList, $ingredient, 1);
         $manager->flush();
 
         if ($request->isXmlHttpRequest()) {
