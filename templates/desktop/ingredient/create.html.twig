@@ -6,5 +6,27 @@
 {% endblock %}
 
 {% block body %}
+    {{ form_start(formView) }}
 
+    {{ form_errors(formView) }}
+
+    <div class="row">
+        <div class="col">
+            {{ form_row(formView.department) }}
+            {{ form_row(formView.name) }}
+        </div>
+        <div class="col">
+            {{ form_row(formView.image) }}
+            {{ form_row(formView.default_unit) }}
+            {{ form_row(formView.breakable_default_unit) }}
+        </div>
+    </div>
+    {{ form_widget(formView) }}
+
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-save"></i>
+        Créer l'ingrédient
+    </button>
+
+    {{ form_end(formView) }}
 {% endblock %}

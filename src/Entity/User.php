@@ -47,6 +47,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $recipes;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Booklet::class, mappedBy="owner", cascade={"persist", "remove"})
+     */
+    private $booklet;
+
     public function __construct()
     {
         $this->recipes = new ArrayCollection();
@@ -179,6 +184,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $recipe->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBooklet(): ?Booklet
+    {
+        return $this->booklet;
+    }
+
+    public function setBooklet(Booklet $booklet): self
+    {
+        // set the owning side of the relation if necessary
+        if ($booklet->getOwner() !== $this) {
+            $booklet->setOwner($this);
+        }
+
+        $this->booklet = $booklet;
 
         return $this;
     }

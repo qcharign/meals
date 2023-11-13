@@ -56,10 +56,16 @@ class Recipe
      */
     private $type;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Booklet::class, mappedBy="recipes")
+     */
+    private $booklets;
+
     public function __construct()
     {
         $this->shoppingLists = new ArrayCollection();
         $this->rows = new ArrayCollection();
+        $this->booklets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -194,6 +200,33 @@ class Recipe
     public function setType(?RecipeType $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Booklet[]
+     */
+    public function getBooklets(): Collection
+    {
+        return $this->booklets;
+    }
+
+    public function addBooklet(Booklet $booklet): self
+    {
+        if (!$this->booklets->contains($booklet)) {
+            $this->booklets[] = $booklet;
+            $booklet->addRecipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBooklet(Booklet $booklet): self
+    {
+        if ($this->booklets->removeElement($booklet)) {
+            $booklet->removeRecipe($this);
+        }
 
         return $this;
     }

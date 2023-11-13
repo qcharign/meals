@@ -15,7 +15,7 @@
                 <li class="list-group-item list-group-item-action active">
                     {{ recipeType.name|capitalize }}
                 </li>
-                {% for recipe in recipeRepository.findBy({"type": recipeType}, {"name": "ASC"}) %}
+                {% for recipe in recipeRepository.findBy({"type": recipeType, "owner": app.user}, {"name": "ASC"}) %}
                     {% include "desktop/recipe/shared/_recipe_row.html.twig" %}
                 {% endfor %}
             </ul>

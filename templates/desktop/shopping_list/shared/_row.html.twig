@@ -6,11 +6,10 @@
         class="list-group-item d-flex justify-content-end align-items-center">
     <i data-loader="replace" class="far {{ (row.bought ? "fa-check-square" : "fa-square") }} "></i>
     <span class="ms-1 {{ (row.bought) ? "text-decoration-line-through" : "" }}">
-        {{ row.ingredient.name }}
+        {{ row.ingredient.name|capitalize }}
     </span>
     <span style="flex: 1"></span>
     {% if row.quantity is not null %}
-        {{ dump(row.ingredient) }}
         <span class="badge float-end bg-primary rounded-pill me-1">
             {% if row.ingredient.breakableDefaultUnit %}
                 {{ row.quantity }}

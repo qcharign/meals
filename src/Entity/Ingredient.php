@@ -27,7 +27,7 @@ class Ingredient
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $image;
+    private $image = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Department::class, inversedBy="ingredients")
@@ -84,7 +84,7 @@ class Ingredient
 
     public function setName(string $name): self
     {
-        $this->name = $name;
+        $this->name = strtolower($name);
 
         return $this;
     }
@@ -109,6 +109,7 @@ class Ingredient
     public function setDepartment(?Department $department): self
     {
         $this->department = $department;
+        $this->image ??= "images/department/{$this->department->getSlug()}.png";
 
         return $this;
     }
@@ -126,7 +127,7 @@ class Ingredient
     }
 
     /**
-     * @return Collection|ShoppingListRow[]
+     * @return Collection<ShoppingListRow>
      */
     public function getShoppingListRows(): Collection
     {
@@ -156,7 +157,7 @@ class Ingredient
     }
 
     /**
-     * @return Collection|RecipeRow[]
+     * @return Collection<RecipeRow>
      */
     public function getRecipeRows(): Collection
     {
@@ -210,7 +211,7 @@ class Ingredient
     }
 
     /**
-     * @return Collection|SpecificConversion[]
+     * @return Collection<SpecificConversion>
      */
     public function getConversions(): Collection
     {

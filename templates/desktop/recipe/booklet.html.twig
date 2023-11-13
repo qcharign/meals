@@ -1,0 +1,12 @@
+{% set active = "booklet" %}
+{% extends 'desktop/base.html.twig' %}
+
+{% block title %}Recettes{% endblock %}
+
+{% block body %}
+    <div class="row">
+        {% for recipeType in recipeTypeRepository.findBy({}, {"sequence": "ASC"}) %}
+            {% include "desktop/shared/_recipetype_card.html.twig" %}
+        {% endfor %}
+    </div>
+{% endblock %}
